@@ -38,10 +38,8 @@ public class Board {
         return selected.contains(number);
     }
 
-    public static void changeTurn() {
-        for (BingoPlayerHandler handler : BingoServer.playerHandlerList) {
-            handler.isMyTurn = !handler.isMyTurn;
-        }
+    public String[] getBoard() {
+        return board;
     }
 
     public void marking(String number, boolean isMyNumber) {

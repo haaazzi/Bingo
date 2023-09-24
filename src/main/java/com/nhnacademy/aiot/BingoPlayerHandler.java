@@ -59,6 +59,16 @@ public class BingoPlayerHandler extends Thread {
                         }
                     }
                     sendBoard();
+                    if (Bingo.checkWin(board)) {
+                        for (BingoPlayerHandler handler : BingoServer.playerHandlerList) {
+                            if (handler != this) {
+                                handler.send("상대가 이겼습니다.");
+                            } else {
+                                handler.send("이겼습니다.");
+                            }
+                        }
+                        System.exit(0);
+                    }
                     Bingo.changeTurn();
                 } else {
                     send("상대방의 순서입니다.");
