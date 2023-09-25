@@ -121,6 +121,7 @@ public class GameServer extends Thread{
                 BufferedWriter serverOut = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
 
             this.serveroutput = serverOut;
+            GameLogic.setGameTable();
             
             String input_line;
             sendMessage("============Tic-Tac-Toe Game============\n");
@@ -128,7 +129,7 @@ public class GameServer extends Thread{
             input_line = serverIn.readLine();
 
             // Player Setup
-            if (!"123456789".contains(input_line.trim())) {
+            if (!"123456789101121314151617181920212232425".contains(input_line.trim())) {
 
                 playerSetup(input_line);
 
@@ -139,13 +140,13 @@ public class GameServer extends Thread{
                 // play - first round ~ - gameplay
                 if (isMyTurn()) {
                     telltoPlayers(getName() + "의 차례입니다!===============================\n");
-                    sendMessage("1 ~ 9 사이의 수를 입력해주세요 : ");
+                    sendMessage("1 ~ 25 사이의 수를 입력해주세요 : ");
                     telltoOtherPlayer(getName() + "이/가 입력하고 있습니다........\n");
 
                     boolean repeatInput = true;
 
                     while (repeatInput && (input_line = serverIn.readLine()) != null) {
-                        if ("123456789".contains(input_line)) {
+                        if ("123456789101121314151617181920212232425".contains(input_line)) {
                             repeatInput = game.getPlayerInput(input_line.trim(), mark);
                         }else if ("QqEeexitExitQuitquit".contains(input_line)) {
 
@@ -155,7 +156,7 @@ public class GameServer extends Thread{
                             System.exit(0);
 
                         }else{
-                            sendMessage("잘못 입력되었습니다.\n다시 입력해주세요. 1 ~ 9 사이의 수를 입력해주세요 : ");
+                            sendMessage("잘못 입력되었습니다.\n다시 입력해주세요. 1 ~ 25 사이의 수를 입력해주세요 : ");
                         }
                     }
 

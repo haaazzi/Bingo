@@ -2,7 +2,7 @@ package com.nhnacademy.aiot;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.stream.IntStream;
+import java.util.List;
 
 /*
  * :게임의 작동원리 담음
@@ -14,37 +14,56 @@ import java.util.stream.IntStream;
  * 
  */
 public class GameLogic {
-    static int[] numbers = IntStream.rangeClosed(1, 25).toArray();
-    static String[][] gameTable = Collections.shuffle(numbers);
+    static String[][] gameTable = new String[5][5];
 
     // table return
     public String[][] getGameTable() {
         return gameTable;
     }
 
+    public static void setGameTable() {
+        List<Integer> number = new ArrayList<>();
+        for (int i = 0; i < 25; i++) {
+            number.add(i + 1);
+        }
+
+        Collections.shuffle(number);
+
+        for (int i = 0; i < 5; i++) {
+
+            for (int j = 0; j < 5; j++) {
+                if (number.get((5*i) + j) < 10) {
+                    gameTable[i][j] = "0" + String.valueOf(number.get((5*i) + j));
+                } else {
+                    gameTable[i][j] = String.valueOf(number.get((5*i) + j));
+                }
+            }
+        }
+    }
+
     // table이 다 찼으면
-    public boolean isFull(){
+    public boolean isFull() {
         int count = 0;
         for (int row = 0; row < 5; row++) {
             for (int column = 0; column < 5; column++) {
-                if (gameTable[row][column].contains("[")||gameTable[row][column].contains("{")) {
+                if (gameTable[row][column].contains("[") || gameTable[row][column].contains("{")) {
                     count++;
                 }
             }
         }
-        
+
         return (count == 25);
-        
+
     }
 
-    //table을 string으로 반환하기
-    public String tableToString(){
+    // table을 string으로 반환하기
+    public String tableToString() {
 
         StringBuilder line = new StringBuilder();
 
         for (int row = 0; row < 5; row++) {
             for (int column = 0; column < 5; column++) {
-                line.append(gameTable[row][column]);
+                line.append(gameTable[row][column] + " ");
             }
             line.append("\n");
         }
@@ -73,8 +92,12 @@ public class GameLogic {
             }
 
             // mark를 입력
-            if (gameTable[row][column].equals("[ ]")) {
-                gameTable[row][column] = "[" + mark + "]";
+            if (!gameTable[row][column].contains("[") || !gameTable[row][column].contains("{")) {
+                if (mark == '[') {
+                    gameTable[row][column] = "[" + gameTable[row][column] + "]";
+                } else if (mark == '{') {
+                    gameTable[row][column] = "{" + gameTable[row][column] + "}";
+                }
             } else {
                 repeatInput = true;
                 System.out.println("이미 다른 값이 있습니다.");
@@ -87,7 +110,7 @@ public class GameLogic {
 
     // 우승유무 확인
     public boolean checkGameOver(char mark) {
-        String encasedMark = "[" + mark + "]";
+        String encasedMark = String.valueOf(mark);
         boolean isGameOver = false;
 
         // Check rows
@@ -98,9 +121,9 @@ public class GameLogic {
          */
 
         for (int row = 0; row < 5; row++) {
-            if (gameTable[row][0].equals(encasedMark) && gameTable[row][1].equals(encasedMark)
-                    && gameTable[row][2].equals(encasedMark)&&gameTable[row][3].equals(encasedMark)
-                    && gameTable[row][4].equals(encasedMark)) {
+            if (gameTable[row][0].contains(encasedMark) && gameTable[row][1].contains(encasedMark)
+                    && gameTable[row][2].contains(encasedMark) && gameTable[row][3].contains(encasedMark)
+                    && gameTable[row][4].contains(encasedMark)) {
                 isGameOver = true;
                 return isGameOver;
             }
@@ -112,8 +135,9 @@ public class GameLogic {
          * 
          */
         for (int column = 0; column < 3; column++) {
-            if (gameTable[0][column].equals(encasedMark) && gameTable[1][column].equals(encasedMark)
-                    && gameTable[2][column].equals(encasedMark)) {
+            if (gameTable[0][column].contains(encasedMark) && gameTable[1][column].contains(encasedMark)
+                    && gameTable[2][column].contains(encasedMark) && gameTable[3][column].contains(encasedMark)
+                    && gameTable[4][column].contains(encasedMark)) {
                 isGameOver = true;
                 return isGameOver;
             }
@@ -126,9 +150,11 @@ public class GameLogic {
          * 
          */
 
-        if ((gameTable[0][0].equals(encasedMark) || gameTable[0][2].equals(encasedMark))
-                && gameTable[1][1].equals(encasedMark)
-                && (gameTable[2][2].equals(encasedMark) || gameTable[2][0].equals(encasedMark))) {
+        if ((gameTable[0][0].contains(encasedMark) || gameTable[0][4].contains(encasedMark))
+                && (gameTable[1][1].contains(encasedMark) || gameTable[1][3].contains(encasedMark))
+                && gameTable[2][2].contains(encasedMark)
+                && (gameTable[3][1].contains(encasedMark) || gameTable[3][3].contains(encasedMark))
+                && (gameTable[4][0].contains(encasedMark) || gameTable[4][4].contains(encasedMark))) {
             isGameOver = true;
             return isGameOver;
         }
