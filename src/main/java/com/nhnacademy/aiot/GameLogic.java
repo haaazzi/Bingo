@@ -1,5 +1,9 @@
 package com.nhnacademy.aiot;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.stream.IntStream;
+
 /*
  * :게임의 작동원리 담음
  * 
@@ -10,51 +14,37 @@ package com.nhnacademy.aiot;
  * 
  */
 public class GameLogic {
-    int MAX_SIZE;// n의 값
-    static String[][] bingoTable;
-
-    // 1. 판을 생성(n x n - 단 n은 홀수이고 5이상인 수)
-    public GameLogic(int MAX_SIZE) {
-
-        // 2. n x n 개의 수를 생성 -> random으로 석김
-    }
-    
-    public void serTable(int MAX_SIZE){
-        for (int row = 0; row < MAX_SIZE; row++) {
-            for (int col = 0; col < MAX_SIZE; col++) {
-                bingoTable[row][col] = Double.toString((Math.random() * (MAX_SIZE - 1)) + 1);
-            }
-        }
-    }
+    static int[] numbers = IntStream.rangeClosed(1, 25).toArray();
+    static String[][] gameTable = Collections.shuffle(numbers);
 
     // table return
     public String[][] getGameTable() {
-        return bingoTable;
+        return gameTable;
     }
 
     // table이 다 찼으면
-    public boolean isFull() {
+    public boolean isFull(){
         int count = 0;
-        for (int row = 0; row < MAX_SIZE; row++) {
-            for (int column = 0; column < MAX_SIZE; column++) {
-                if (!bingoTable[row][column].equals("[ ]")) {
+        for (int row = 0; row < 5; row++) {
+            for (int column = 0; column < 5; column++) {
+                if (gameTable[row][column].contains("[")||gameTable[row][column].contains("{")) {
                     count++;
                 }
             }
         }
-
-        return (count == 9);
-
+        
+        return (count == 25);
+        
     }
 
-    // table을 string으로 반환하기
-    public String tableToString() {
+    //table을 string으로 반환하기
+    public String tableToString(){
 
         StringBuilder line = new StringBuilder();
 
-        for (int row = 0; row < MAX_SIZE; row++) {
-            for (int column = 0; column < MAX_SIZE; column++) {
-                line.append(bingoTable[row][column]);
+        for (int row = 0; row < 5; row++) {
+            for (int column = 0; column < 5; column++) {
+                line.append(gameTable[row][column]);
             }
             line.append("\n");
         }
@@ -67,24 +57,24 @@ public class GameLogic {
         int placement = Integer.parseInt(playerInput);
         boolean repeatInput = false;
 
-        if (placement > 9 || placement < 0) {
+        if (placement > 25 || placement < 0) {
             repeatInput = true;
 
         } else {
             // row & column 찾기
-            int row = placement / 3;
-            int column = placement % 3;
+            int row = placement / 5;
+            int column = placement % 5;
 
-            if (placement % 3 == 0) {
+            if (placement % 5 == 0) {
                 row--;
-                column = 2;
+                column = 4;
             } else {
                 column--;
             }
 
             // mark를 입력
-            if (bingoTable[row][column].equals("[ ]")) {
-                bingoTable[row][column] = "[" + mark + "]";
+            if (gameTable[row][column].equals("[ ]")) {
+                gameTable[row][column] = "[" + mark + "]";
             } else {
                 repeatInput = true;
                 System.out.println("이미 다른 값이 있습니다.");
@@ -107,9 +97,10 @@ public class GameLogic {
          * 
          */
 
-        for (int row = 0; row < 3; row++) {
-            if (bingoTable[row][0].equals(encasedMark) && bingoTable[row][1].equals(encasedMark)
-                    && bingoTable[row][2].equals(encasedMark)) {
+        for (int row = 0; row < 5; row++) {
+            if (gameTable[row][0].equals(encasedMark) && gameTable[row][1].equals(encasedMark)
+                    && gameTable[row][2].equals(encasedMark)&&gameTable[row][3].equals(encasedMark)
+                    && gameTable[row][4].equals(encasedMark)) {
                 isGameOver = true;
                 return isGameOver;
             }
@@ -121,8 +112,8 @@ public class GameLogic {
          * 
          */
         for (int column = 0; column < 3; column++) {
-            if (bingoTable[0][column].equals(encasedMark) && bingoTable[1][column].equals(encasedMark)
-                    && bingoTable[2][column].equals(encasedMark)) {
+            if (gameTable[0][column].equals(encasedMark) && gameTable[1][column].equals(encasedMark)
+                    && gameTable[2][column].equals(encasedMark)) {
                 isGameOver = true;
                 return isGameOver;
             }
@@ -135,14 +126,13 @@ public class GameLogic {
          * 
          */
 
-        if ((bingoTable[0][0].equals(encasedMark) || bingoTable[0][2].equals(encasedMark))
-                && bingoTable[1][1].equals(encasedMark)
-                && (bingoTable[2][2].equals(encasedMark) || bingoTable[2][0].equals(encasedMark))) {
+        if ((gameTable[0][0].equals(encasedMark) || gameTable[0][2].equals(encasedMark))
+                && gameTable[1][1].equals(encasedMark)
+                && (gameTable[2][2].equals(encasedMark) || gameTable[2][0].equals(encasedMark))) {
             isGameOver = true;
             return isGameOver;
         }
 
         return isGameOver;
     }
-
 }
